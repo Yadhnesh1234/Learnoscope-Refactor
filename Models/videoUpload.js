@@ -7,14 +7,8 @@ const videoUploadSchema= new mongoose.Schema({
     uploaderEmail: String, 
     uploadDate: Date,       // Date and time when the video was uploaded 
     tags: Array,        // An array of tags associated with the video
-    isBookmarked:{
-        type:Boolean,
-        default:false
-    },
-    isInHistory:{
-        type:Boolean,
-        default:false
-    }
+    like:Number,
+    report:Number
 })
 
 const VideoUpload = mongoose.model("VideoUpload",videoUploadSchema);

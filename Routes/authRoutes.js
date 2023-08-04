@@ -6,6 +6,16 @@ const {
   protect,
   deleteUserAccount,
 } = require("../Controllers/Auth/authController");
+const {
+  addToBookMark,
+  addToHistory,
+  removeFromBookMark,
+  removeFromHistory,
+  removeFromYourVideo,
+  getBookmarkVideoList,
+  getHistoryVideoList,
+  getYourVideoVideoList
+} = require("../Controllers/userUtility")
 const multer = require("multer");
 const path = require("path");
 
@@ -32,12 +42,16 @@ router.post(
     register(req, res, next);
   }
 );
-
 // user login
 router.post("/login", login);
-
 // Delete user account
 router.delete("/user/delete", protect, deleteUserAccount);
-// router.get("/a", protect);
-
+router.post("/add-to-bookmark/:id", addToBookMark)
+router.post("/add-to-history/:id", addToHistory)
+router.post("/remove-from-bookmark/:id",removeFromBookMark)
+router.post("/remove-from-history/:id",removeFromHistory)
+router.post("/remove-from-YourVideo/:id",removeFromYourVideo)
+router.get("/get-bookmark-list/:id",getBookmarkVideoList)
+router.get("/get-history-list/:id",getHistoryVideoList)
+router.get("/get-yourvideo-list/:id",getYourVideoVideoList)
 module.exports = router;

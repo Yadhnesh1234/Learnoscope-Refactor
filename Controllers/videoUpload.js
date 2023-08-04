@@ -3,7 +3,7 @@ const fs = require('fs');
 const path = require('path');
 const axios = require('axios');
 const FormData = require('form-data');
-
+const User = require("../Models/Auth/user")
 const sightengineApiUser = '166011782';
 const sightengineApiSecret = 'DFwwGX3jLxuTnyv5jfcm';
 
@@ -12,6 +12,8 @@ const UploadVideoData = async (req, res, next) => {
   const videoFile = req.files['video'][0];
   const imageFile = req.files['image'][0];
   const baseUrl = 'http://localhost:3000/'
+  const user_Id= req.params.id
+  var save_data;
   const { title, description, filePath, thumbnailPath, uploaderEmail, tags } = req.body
   if (!videoFile || !imageFile) {
     return res.status(400).json({ error: 'Video and image files are required.' });
@@ -31,21 +33,16 @@ const UploadVideoData = async (req, res, next) => {
       return res.status(400).send({ msg: 'Error renaming video file.' });
     }
 
-    fs.rename(img, imagePath, (imageErr) => {
+    fs.rename(img, imagePath, async (imageErr) => {
       if (imageErr) {
         // If there's an error with the image file, you may want to delete the video file to keep them in sync.
         fs.unlink(videoPath, () => {
           return res.status(400).send({ msg: 'Error renaming image file.' });
         });
       }
-
-      // Both video and image files have been successfully renamed and moved.
-      // You can handle the files (videoPath and imagePath) as per your requirements.
-
-      // Call the function to get moderation results
-      getModerationResults(videoPath);
+      try{
       const uploadDate = new Date();
-      var save_data = new VideoUpload({
+      save_data = new VideoUpload({
         title,
         description,
         filePath: baseUrl + videoPath,
@@ -54,8 +51,18 @@ const UploadVideoData = async (req, res, next) => {
         uploadDate,
         tags
       })
-      save_data.save();
+      save_data.save()
+      await User.findOneAndUpdate({
+        _id:user_Id
+      },{
+        $addToSet:{
+          userUplodedVideo:save_data._id
+        }
+      })
       res.status(200).send({ save_data, msg: 'Files uploaded and renamed successfully!' });
+    }catch(err){
+      res.status(500).send({ msg: "Internal Server Error" });
+    }
     });
   });
 }
@@ -64,7 +71,7 @@ async function getModerationResults(videoPath) {
   const data = new FormData();
   data.append('media', fs.createReadStream(videoPath));
   data.append('models', 'nudity,offensive,wad,gore,gambling');
-  data.append('callback_url', 'https://d5b8-103-120-251-154.ngrok-free.app/api/v1/moderate-result');
+  data.append('callback_url', 'https://4524-103-120-251-148.ngrok-free.app/api/v1/moderate-result');
   data.append('api_user', sightengineApiUser);
   data.append('api_secret', sightengineApiSecret);
 
@@ -86,7 +93,8 @@ async function getModerationResults(videoPath) {
 
 const moderationCallBack = async (req, res, next) => {
   const moderationResults = req.body;
-  const moderate_result_list = moderationResults.data.frames;
+  // const moderate_result_list = moderationResults.data.frames;
+  // console.log(moderate_result_list)
 }
 
 /*Get Video*/
@@ -146,6 +154,12 @@ const deleteVideo = async (req, res, next) => {
     return res.status(500).json({ message: 'Internal server error.' });
   }
 }
+
+/*addToBookMark Video*/
+
+
+
+
 module.exports = {
   UploadVideoData,
   moderationCallBack,

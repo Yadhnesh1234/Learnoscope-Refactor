@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const VideoUpload=require("../videoUpload")
 const bcrypt = require("bcryptjs");
 
 const UserSchema = new mongoose.Schema({
@@ -51,6 +52,20 @@ const UserSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
+  bookmark:[{
+    type:mongoose.Schema.Types.ObjectId,
+    ref:'VideoUpload'
+  }],
+  historyVideo:[{
+    type:mongoose.Schema.Types.ObjectId,
+    ref:'VideoUpload'
+  }],
+  userUplodedVideo:[
+    {
+      type:mongoose.Schema.Types.ObjectId,
+      ref:'VideoUpload'
+    }
+  ]
 });
 
 // this is executed just before saving the data to the database
