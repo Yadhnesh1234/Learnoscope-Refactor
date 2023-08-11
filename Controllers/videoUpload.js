@@ -155,9 +155,51 @@ const deleteVideo = async (req, res, next) => {
   }
 }
 
-/*addToBookMark Video*/
+//increment video like
+const incVideoLike=async(req,res,next)=>{
+     const video_id=req.params.id
+     try{
+      await VideoUpload.findOneAndUpdate({_id:video_id},{$inc : {like:1}});
+      return res.status(200).json({status:200,msg:"Video Liked"});
+     }catch(err){
+      console.log(err)
+      return res.status(500).json({ message: 'Internal server error.' });
+     }
+}
 
+//decrement video like
+const decVideoLike=async(req,res,next)=>{
+  const video_id=req.params.id
+  try{
+   await VideoUpload.findOneAndUpdate({_id:video_id},{$inc : {like:-1}});
+   return res.status(200).json({status:200,msg:"Video unLiked"});
+  }catch(err){
+   return res.status(500).json({ message: 'Internal server error.' });
+  }
+}
 
+//increment report count
+
+const incVideoReport= async(req,res,next)=>{
+  const video_id=req.params.id
+  try{
+   await VideoUpload.findOneAndUpdate({_id:video_id},{$inc : {report:1}});
+   return res.status(200).json({status:200,msg:"Video reported"});
+  }catch(err){
+   return res.status(500).json({ message: 'Internal server error.' });
+  }
+}
+
+//decrement report count
+const decVideoReport= async(req,res,next)=>{
+  const video_id=req.params.id
+  try{
+   await VideoUpload.findOneAndUpdate({_id:video_id},{$inc : {report:-1}},{returnNewDocument : true} );
+   return res.status(200).json({status:200,msg:"Video reporting cancel"});
+  }catch(err){
+   return res.status(500).json({ message: 'Internal server error.' });
+  }
+}
 
 
 module.exports = {
@@ -165,5 +207,9 @@ module.exports = {
   moderationCallBack,
   getVideoData,
   getVideoList,
-  deleteVideo
+  deleteVideo,
+  incVideoLike,
+  decVideoLike,
+  incVideoReport,
+  decVideoReport
 }

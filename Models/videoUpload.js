@@ -7,8 +7,8 @@ const videoUploadSchema= new mongoose.Schema({
     uploaderEmail: String, 
     uploadDate: Date,       // Date and time when the video was uploaded 
     tags: Array,        // An array of tags associated with the video
-    like:Number,
-    report:Number
+    like:{type:Number,default:0},
+    report:{type:Number,default:0}
 })
 
 const VideoUpload = mongoose.model("VideoUpload",videoUploadSchema);

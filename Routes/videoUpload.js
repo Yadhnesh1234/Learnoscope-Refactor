@@ -5,7 +5,11 @@ const { UploadVideoData,
         moderationCallBack, 
         getVideoData, 
         getVideoList, 
-        deleteVideo
+        deleteVideo,
+        incVideoLike,
+        decVideoLike,
+        incVideoReport,
+        decVideoReport
       } = require('../Controllers/videoUpload')
 
 const upload = multer({ dest: 'uploads' }).fields([
@@ -19,4 +23,8 @@ router.post("/moderate-result", moderationCallBack)
 router.get("/get-video-data/:id", getVideoData)
 router.get("/get-video-list", getVideoList)
 router.delete("/delete-video/:id", deleteVideo)
+router.get("/inc-video-like/:id",incVideoLike)
+router.get("/dec-video-like/:id",decVideoLike)
+router.get("/inc-video-report/:id",incVideoReport)
+router.get("/dec-video-report/:id",decVideoReport)
 module.exports = router
